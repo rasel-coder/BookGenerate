@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "boxicons@2.1.4",
+      "destination": "wwwroot/lib/boxicons/",
+      "files": [
+        "dist/boxicons.js",
+        "dist/boxicons.min.js",
+        "css/boxicons.css",
+        "css/boxicons.min.css"
+      ]
+    }
+  ]
+}

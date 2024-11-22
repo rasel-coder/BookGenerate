@@ -1,0 +1,95 @@
+﻿@model BookGenerate.ViewModels.BookPage
+
+<div class="container pt-5">
+    <form method="get" asp-action="Index" class="row g-3 m-0" id="book-generate-form" style="background: #f4f4f4;">
+        @Html.HiddenFor(x => x.Page, new { id = "book-page-count" })
+        <div class="col-md-3 mt-3 mb-3">
+            <div class="form-control">
+                <label for="region" class="form-label m-0 color-gray">Language</label>
+                <select asp-for="Region" id="region" class="form-select border-0 p-0 text-black" onchange="this.form.submit()">
+                    <option value="en-US">English (USA)</option>
+                    <option value="de-DE">German (Germany)</option>
+                    <option value="fr-FR">French (France)</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-3 mt-3 mb-3">
+            <div class="form-control d-flex align-items-center justify-content-between">
+                <div class="w-100">
+                    @Html.LabelFor(x => x.Seed, new { @class = "form-label m-0 color-gray" })
+                    @Html.EditorFor(x => x.Seed, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", disabled = "disabled", type = "number", style = "background: none;" } })
+                </div>
+                <button type="submit" class="border-0 p-0 pointer-event" style="background: none;">
+                    <img src="~/images/shuffle.png" width="25" alt="Shuffle" />
+                </button>
+            </div>
+        </div>
+        <div class="col-md-3 mt-3 mb-3">
+            <div class="form-control">
+                @Html.LabelFor(x => x.Like, new { @class = "form-label m-0 color-gray" })
+                <input type="range" asp-for="Like" id="likes" min="0" max="100" class="w-100" onchange="this.form.submit()" />
+            </div>
+        </div>
+        <div class="col-md-3 mt-3 mb-3">
+            <div class="form-control">
+                @Html.LabelFor(x => x.Review, new { @class = "form-label m-0 color-gray" })
+                @Html.EditorFor(x => x.Review, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", min = 1, max = 5, step = 0.1, type = "number", onchange = "this.form.submit()" } })
+            </div>
+        </div>
+    </form>
+
+    <div class="accordion" id="book-generate-row">
+        <div class="accordion-item">
+            <div class="row p-3 m-0">
+                <p class="fw-bold text-center m-0" style="width: 8%;">#</p>
+                <p class="fw-bold m-0" style="width: 23%;">ISBN</p>
+                <p class="fw-bold m-0" style="width: 23%;">Title</p>
+                <p class="fw-bold m-0" style="width: 23%;">Author(s)</p>
+                <p class="fw-bold m-0" style="width: 23%;">Publisher</p>
+            </div>
+        </div>
+        @Html.Partial("_BookRows", Model.Books)
+        <div id="book-generate-row-placeholder"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#book-page-count').val(2);
+        });
+
+        window.addEventListener("scroll", function () {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                var form = document.getElementById('book-generate-form');
+                var formData = new FormData(form);
+
+                var queryString = new URLSearchParams();
+                formData.forEach(function (value, key) {
+                    queryString.append(key, value);
+                });
+
+                var url = '@Url.Action("GetMoreBooks", "Home")?' + queryString.toString();
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'html',
+                    success: function (response) {
+                        if (response) {
+                            $('#book-generate-row-placeholder').append(response);
+                            var currentPageCount = $('#book-page-count').val();
+                            $('#book-page-count').val(parseInt(currentPageCount) + 1);
+                            console.log("currentPageCount");
+                            console.log(currentPageCount);
+                        } else {
+                            console.error('Received empty data');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX error: ' + status + ': ' + error);
+                    }
+                });
+            }
+        });
+    </script>
+}
