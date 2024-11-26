@@ -24,7 +24,7 @@
             <div class="form-control d-flex align-items-center justify-content-between">
                 <div class="w-100">
                     @Html.LabelFor(x => x.Seed, new { @class = "form-label m-0 color-gray" })
-                    @Html.EditorFor(x => x.Seed, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", style = "background: none;", id = "book-seed" } })
+                    @Html.EditorFor(x => x.Seed, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", style = "background: none;", id = "book-seed", onchange = "this.form.submit()" } })
                 </div>
 
                 <button type="submit" class="border-0 p-0 pointer-event" style="background: none;" id="seed-button">
@@ -69,8 +69,15 @@
             $("input[name='IsChangedSeed']").val("false");
         });
 
+        $('#book-seed').on('keydown', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+
         $('#seed-button').on('click', function (e) {
             e.preventDefault();
+            console.log("Hii");
             $("input[name='IsChangedSeed']").val("true");
             $("#book-generate-form").submit();
         })
