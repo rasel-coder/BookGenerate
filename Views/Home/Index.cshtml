@@ -1,8 +1,14 @@
 ﻿@model BookGenerate.ViewModels.BookPage
 
+@{
+    var x = Model;
+}
+
 <div class="container pt-5">
     <form method="get" asp-action="Index" class="row g-3 m-0" id="book-generate-form" style="background: #f4f4f4;">
         @Html.HiddenFor(x => x.Page, new { id = "book-page-count" })
+        @Html.HiddenFor(x => x.IsChangedSeed, new { id = "book-isChangedSeed" })
+
         <div class="col-md-3 mt-3 mb-3">
             <div class="form-control">
                 <label for="region" class="form-label m-0 color-gray">Language</label>
@@ -13,13 +19,15 @@
                 </select>
             </div>
         </div>
+
         <div class="col-md-3 mt-3 mb-3">
             <div class="form-control d-flex align-items-center justify-content-between">
                 <div class="w-100">
                     @Html.LabelFor(x => x.Seed, new { @class = "form-label m-0 color-gray" })
-                    @Html.EditorFor(x => x.Seed, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", disabled = "disabled", type = "number", style = "background: none;" } })
+                    @Html.EditorFor(x => x.Seed, new { htmlAttributes = new { @class = "form-control border-0 p-0 text-black", style = "background: none;", id = "book-seed" } })
                 </div>
-                <button type="submit" class="border-0 p-0 pointer-event" style="background: none;">
+
+                <button type="submit" class="border-0 p-0 pointer-event" style="background: none;" id="seed-button">
                     <img src="~/images/shuffle.png" width="25" alt="Shuffle" />
                 </button>
             </div>
@@ -57,10 +65,21 @@
     <script>
         $(document).ready(function () {
             $('#book-page-count').val(2);
+            $('#book-seed').val(@Model.Seed);
+            $("input[name='IsChangedSeed']").val("false");
         });
 
+        $('#seed-button').on('click', function (e) {
+            e.preventDefault();
+            $("input[name='IsChangedSeed']").val("true");
+            $("#book-generate-form").submit();
+        })
+
+        let isLoading = false;
         window.addEventListener("scroll", function () {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+            if (isLoading) return;
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+                isLoading = true;
                 var form = document.getElementById('book-generate-form');
                 var formData = new FormData(form);
 
@@ -84,12 +103,15 @@
                         } else {
                             console.error('Received empty data');
                         }
+                        isLoading = false;
                     },
                     error: function (xhr, status, error) {
                         console.error('AJAX error: ' + status + ': ' + error);
+                        isLoading = false;
                     }
                 });
             }
-        });
+        })
+
     </script>
 }

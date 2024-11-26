@@ -34,10 +34,10 @@ namespace BookGenerate.Controllers
             BookPage bookPage = new BookPage();
             bookPage.Books = bookGeneratorService.GenerateBooks(model, model?.Region);
             bookPage.Region = model.Region;
-            bookPage.Seed = random.Next(999999, 99999999);
             bookPage.Like = model.Like;
             bookPage.Review = model.Review;
             bookPage.Page = model.Page + 2;
+            bookPage.Seed = model.IsChangedSeed ? random.Next(999999, 99999999) : model.Seed;
             return View(bookPage);
         }
 

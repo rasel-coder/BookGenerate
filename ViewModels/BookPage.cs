@@ -10,7 +10,8 @@ public class BookPage
     }
     public int Page { get; set; }
     public string? Region { get; set; }
-    public int Seed { get; set; }
+    public int Seed { get; set; } = 87189353;
+    public bool IsChangedSeed { get; set; }
     public int Like { get; set; } = 100;
     public double Review { get; set; } = 4.7;
     public List<Book> Books { get; set; } = new();
